@@ -1,0 +1,732 @@
+openapi: 3.0.0
+info:
+  title: api-gateway
+  version: 1.0.0
+servers:
+  - url: http://{{api_gateway_host}}
+  - url: https://e5a14294-3689-4cff-a516-bbe65ad6fe74.mock.pstmn.io
+  - url: https://localhost:8014
+  - url: https://checkout.rafinita.com
+  - url: https://refund.free.beeceptor.com
+  - url: https://192.168.254.172:8008
+  - url: http://192.168.254.172:8008
+  - url: https://callback.rafinita.com
+  - url: https://127.0.0.1:8008
+components:
+  securitySchemes:
+    noauthAuth:
+      type: http
+      scheme: noauth
+    bearerAuth:
+      type: http
+      scheme: bearer
+tags:
+  - name: sale
+  - name: auth
+  - name: recurring-sale
+  - name: recurring-auth
+  - name: creditvoid
+  - name: transaction-info
+  - name: service
+  - name: alive
+  - name: callback
+  - name: callback > Connector
+  - name: callback > Connector > paynet
+  - name: callback > Connector > XVienasUab
+  - name: callback > Connector > Bitgo
+  - name: verify
+  - name: credit
+  - name: dms
+  - name: virtual
+  - name: virtual > Conector
+  - name: debit
+  - name: recurring-shedule
+  - name: void
+  - name: transfer
+  - name: retry
+  - name: pyn
+paths:
+  /post:
+    post:
+      tags:
+        - retry
+      summary: retry
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  example: RETRY
+                client_key:
+                  type: string
+                  example: 1c568e26-c997-11e9-8be4-0242ac12000f
+                trans_id:
+                  type: string
+                  example: '{{recurring_trans_id}}'
+                hash:
+                  type: string
+                  example: '{{hash}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /api/sale/:
+    post:
+      tags:
+        - sale
+      summary: redirect sale
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  example: SALE
+                client_key:
+                  type: string
+                  example: 1c568e26-c997-11e9-8be4-0242ac12000f
+                channel_id:
+                  type: string
+                  example: onego
+                order_id:
+                  type: string
+                  example: '{{$timestamp}}'
+                order_amount:
+                  type: number
+                  example: '1.03'
+                order_currency:
+                  type: string
+                  example: USD
+                order_description:
+                  type: string
+                  example: wine
+                card_number:
+                  type: integer
+                  example: '4601541833776519'
+                card_exp_month:
+                  type: integer
+                  example: '01'
+                card_exp_year:
+                  type: integer
+                  example: '2025'
+                card_cvv2:
+                  type: integer
+                  example: '123'
+                payer_first_name:
+                  type: string
+                  example: John
+                payer_last_name:
+                  type: string
+                  example: Rickher
+                payer_middle_name:
+                  type: string
+                  example: Patronimicffffffffff
+                payer_birth_date:
+                  type: string
+                  example: '1970-10-10'
+                payer_address:
+                  type: string
+                  example: Shevchenko 1
+                payer_address2:
+                  type: string
+                  example: address2
+                payer_country:
+                  type: string
+                  example: UA
+                payer_state:
+                  type: string
+                  example: Kyiv
+                payer_city:
+                  type: string
+                  example: Kyiv
+                payer_zip:
+                  type: integer
+                  example: '1234'
+                payer_email:
+                  type: string
+                  example: test@gmail.com
+                payer_phone:
+                  type: string
+                  example: +3898 123 45 67
+                payer_ip:
+                  type: string
+                  example: 23.129.64.182
+                term_url_3ds:
+                  type: string
+                  example: http://asdf.com
+                hash:
+                  type: string
+                  example: '{{hash}}'
+                auth:
+                  type: string
+                  example: 'Y'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /internal-host/06735ac0-daae-11ef-a114-0242ac120015:
+    post:
+      tags:
+        - sale
+      summary: temp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                body: >-
+                  eyJ1cmwiOiJodHRwczpcL1wvbG9jYWxob3N0OjgwMTRcL2NvbGxlY3RvclwvMDY3MzVhYzAtZGFhZS0xMWVmLWExMTQtMDI0MmFjMTIwMDE1IiwicGFyYW1zIjp7ImJvZHkiOiJlbXN5VlRkVWRqWlpUbFl5ZUVGSGFGVlpVekF3VWxsSVdEWnNaalJZWkhaSFNGSlJSWGx3WlhwUFN6RTJTa0YxTmpCaGJIcHllRTFQTm5oNGVubFpWVlF2TkhwRFdEbGpVa05sZEZaeGRtaGljamhoYVRCS2NERXhSVzVEYkhWS04xRlFUMW93VVVwVlpFRmpaR0ZDZFZkWlJWSjBWM1YyUVRoM2VYbG9abGxJWkVvMlIySnZOMFZwTTFrMmJtWTBVR293ZGpKblBUMDZPbEJWYjNJdmVDdGxaV3c1TUZWS1MzQnBXRXhoWWtFOVBRPT0ifSwidHJhbnNhY3Rpb25JZCI6IjA3MWE2ZjU0LWRhYWUtMTFlZi05NjhmLTAyNDJhYzEyMDAxNSIsImNoZWNrQ291bnQiOjAsImNoZWNrRGVsYXkiOm51bGx9
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /collector:
+    post:
+      tags:
+        - auth
+      summary: https://checkout.rafinita.com/collector
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                  example: >-
+                    "cjhhbFRBZ1ptTklGQkJicHZxdmxBMzZwV2o3Y0JLb3hmcXc4YWlpYm9wNUZBNXg0R0Z4RnZJWlZTQUxCeFM2UzJnTnR0SjJBcEc1OGpmRVdqeDZ3cWpVUFgrajNKaGFzUVdpQjcvajBXNjdwU2JVTGhteUpHUFpnanJJNkpENmRkbWdRbVBXK05nL2Y3TlM3Y3dIL2hBPT06OhWCJ7G77eVrSahMFUzh1tc="
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /:
+    post:
+      tags:
+        - creditvoid
+      summary: creditvoid(refund)_on Proxima transactions
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  example: CREDITVOID
+                client_key:
+                  type: string
+                  example: 1c568e26-c997-11e9-8be4-0242ac12000f
+                trans_id:
+                  type: string
+                  example: 27131-09449-77777
+                amount:
+                  type: number
+                  description: |+
+
+
+                  example: '11.95'
+                hash:
+                  type: string
+                  example: '{{creditVoid_on_Proxima}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /service/version:
+    get:
+      tags:
+        - service
+      summary: version
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /service/health:
+    get:
+      tags:
+        - service
+      summary: health
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /service/alive:
+    get:
+      tags:
+        - alive
+      summary: alive check
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /callback/paynet:
+    post:
+      tags:
+        - callback > Connector > paynet
+      summary: notification
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  example: notification
+                code:
+                  type: string
+                  example: '{{code}}'
+                txn_id:
+                  type: string
+                  example: '{{txn_id}}'
+                order_amount:
+                  type: string
+                  example: '{{amount}}'
+                order_currency:
+                  type: string
+                  example: USD
+                hash:
+                  type: string
+                  example: '{{hash}}'
+      parameters:
+        - name: api-key
+          in: header
+          schema:
+            type: string
+          example: 2e4072d8-0e7e-45c3-9b39-0af82c6f2992
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /callback/x_vienas_uab:
+    post:
+      tags:
+        - callback > Connector > XVienasUab
+      summary: https://192.168.254.172:8008/callback/x_vienas_uab
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                signature: >-
+                  112fd0d8f9771656cf2e28f501ae4ea762ae5582500a8a96a5ae4fbb07188bc1
+                orderNumber: WOSPSBSO
+                user:
+                  email: 1733148425-john-smith@gmail.com
+                  profileNumber: URPLOWX2
+                deposits:
+                  - transactionNumber: ATPTPIPC
+                    status: failed
+                    fees: '0.00000000'
+                    amount: '40.00000000'
+                    netAmount: '40.00000000'
+                    currency:
+                      name: Euro
+                      symbol: EUR
+                    messages:
+                      acquirerResponse:
+                        code: '320'
+                        message: Required argument is missing. Check parameters.
+                      schemeElectronicCommerceIndicator:
+                        code: '07'
+                        message: >-
+                          Authentication is unsuccessful or not attempted. The
+                          credit card is either a non-3D card or the card
+                          issuing bank does not handle it as a 3D transaction.
+                      schemeResponse:
+                        code: '59'
+                        message: Suspected fraud.
+                      3dsAuthenticationResponse:
+                        code: '06'
+                        message: Invalid card number.
+                withdrawals:
+                  - transactionNumber: WT38TTTW
+                    status: awaiting
+                    fees: '0.00000000'
+                    amount: '43.62050163'
+                    netAmount: '43.62050163'
+                    currency:
+                      name: Tether
+                      symbol: USDT
+                deposit:
+                  transactionNumber: ATPTPIPC
+                  status: failed
+                  fees: '0.00000000'
+                  amount: '40.00000000'
+                  netAmount: '40.00000000'
+                  currency:
+                    name: Euro
+                    symbol: EUR
+                  messages:
+                    acquirerResponse:
+                      code: '320'
+                      message: Required argument is missing. Check parameters.
+                    schemeElectronicCommerceIndicator:
+                      code: '07'
+                      message: >-
+                        Authentication is unsuccessful or not attempted. The
+                        credit card is either a non-3D card or the card issuing
+                        bank does not handle it as a 3D transaction.
+                    schemeResponse:
+                      code: '59'
+                      message: Suspected fraud.
+                    3dsAuthenticationResponse:
+                      code: '06'
+                      message: Invalid card number.
+                withdrawal:
+                  transactionNumber: WT38TTTW
+                  status: awaiting
+                  fees: '0.00000000'
+                  amount: '43.62050163'
+                  netAmount: '43.62050163'
+                  currency:
+                    name: Tether
+                    symbol: USDT
+                payload: '{"txid": "12345"}'
+      security:
+        - noauthAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /callback/bitgo:
+    post:
+      tags:
+        - callback > Connector > Bitgo
+      summary: http://192.168.254.172:8008/callback/bitgo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                hash: >-
+                  44268c8e1b564bb87faa97a90070644890b8e81e1def5dc536e17d66e601e4c0
+                transfer: 66d968385bf5b753d8b7a438abf70560
+                coin: tbtc
+                type: transfer
+                state: confirmed
+                wallet: 6425347f61733f00074dc32c418b8435
+                walletType: hot
+                transferType: receive
+                baseValue: 1000
+                baseValueString: '1000'
+                value: 1000
+                valueString: '1000'
+                feeString: '780061'
+                initiator:
+                  - external
+                receiver: tb1pd4zvnwspdssun2e5ls0x0t6ed8l5p5g93xjpe5wz7rtzq70k7wksshlq7e
+      security:
+        - noauthAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /callback/{paymentPublicId}/{hash}:
+    post:
+      tags:
+        - callback
+      summary: callback-neobanq-refund
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+              example: >-
+                "{\n    \"transaction_type\": \"refund\",\n   
+                \"transaction_status\": \"success\",\n    \"amount\":
+                \"1.03\"\n}"
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: paymentPublicId
+          in: path
+          schema:
+            type: string
+          required: true
+          example: 8918b64c-fe57-11ea-b6c6-0242ac120013
+        - name: hash
+          in: path
+          schema:
+            type: string
+          required: true
+          example: '{{hash}}'
+      responses:
+        '400':
+          description: OK
+          headers:
+            Server:
+              schema:
+                type: string
+                example: nginx/1.17.6
+            Content-Type:
+              schema:
+                type: string
+                example: application/json
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            X-Powered-By:
+              schema:
+                type: string
+                example: PHP/7.4.2
+            Cache-Control:
+              schema:
+                type: string
+                example: no-cache, private
+            Date:
+              schema:
+                type: string
+                example: Tue, 03 Mar 2020 14:02:55 GMT
+          content:
+            application/json:
+              schema:
+                type: object
+              example: {}
+  /callback/test:
+    post:
+      tags:
+        - callback
+      summary: static-callback-test-connector-crypto
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                trans_id:
+                  type: string
+                  example: '{{sale_trans_id}}'
+                result:
+                  type: string
+                  example: '{{result}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /192.168.254.173:8008/callback/wpg:
+    post:
+      tags:
+        - callback
+      summary: https://callback.rafinita.com/192.168.254.173:8008/callback/wpg
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                eventId: aec0924a-703d-4a61-9831-7858c612748c
+                eventTimestamp: '2024-05-17T09:07:21.878329132'
+                eventDetails:
+                  classification: payment
+                  transactionReference: dbce7400-142c-11ef-922c-0242ac120015
+                  type: authorized
+                  date: '2024-05-17'
+                  amount:
+                    value: 1800
+                    currencyCode: USD
+                  _links:
+                    payment:
+                      href: ''
+      parameters:
+        - name: ''
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /verify/test:
+    post:
+      tags:
+        - verify
+      summary: static-verify-test-connector
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                trans_id:
+                  type: string
+                  example: 8ad81882-9d81-11eb-8b7c-0242ac120013
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /post-va:
+    post:
+      tags:
+        - void
+      summary: void virtual
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  example: VOID
+                client_key:
+                  type: string
+                  example: 1c568e26-c997-11e9-8be4-0242ac12000f
+                trans_id:
+                  type: string
+                  example: '{{sale_trans_id}}'
+                hash:
+                  type: string
+                  example: '{{void_hash}}'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /pyn/v1/payments:
+    post:
+      tags:
+        - pyn
+      summary: auth
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                paymentType:
+                  type: string
+                  example: PA
+                entityId:
+                  type: string
+                  example: 1c568e26-c997-11e9-8be4-0242ac12000f
+                card.number:
+                  type: integer
+                  example: '4601541833776519'
+                card.expiryMonth:
+                  type: integer
+                  example: '01'
+                card.expiryYear:
+                  type: integer
+                  example: '2038'
+                card.cvv:
+                  type: integer
+                  example: '123'
+                currency:
+                  type: string
+                  example: USD
+                amount:
+                  type: number
+                  example: '6.01'
+                shopperResultUrl:
+                  type: string
+                  example: https://dfsdf
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /pyn/v1/payments/6f0f9248-0019-11f0-8ea1-7abd772b675a:
+    post:
+      tags:
+        - pyn
+      summary: capture
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                paymentType:
+                  type: string
+                  example: CP
+                entityId:
+                  type: string
+                  example: 1c568e26-c997-11e9-8be4-0242ac12000f
+                currency:
+                  type: string
+                  example: USD
+                amount:
+                  type: number
+                  example: '6.01'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /pyn/v1/payments/232afb9c-00b9-11f0-a776-e63552d98712:
+    post:
+      tags:
+        - pyn
+      summary: refund
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                paymentType:
+                  type: string
+                  example: RF
+                entityId:
+                  type: string
+                  example: 1c568e26-c997-11e9-8be4-0242ac12000f
+                currency:
+                  type: string
+                  example: USD
+                amount:
+                  type: number
+                  example: '3.01'
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
